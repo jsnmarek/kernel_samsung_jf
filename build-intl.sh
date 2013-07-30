@@ -1,6 +1,6 @@
 #!/bin/sh
-export CARRIER="SPR"
+export CARRIER="INTL"
 export ADD_CHRONIC_CONFIG="Y"
 export EXEC_LOKI="N"
-echo "### SPRINT KERNEL BUILD ###"
+echo "### INTERNATIONAL KERNEL BUILD ###"
 ./build_master.sh
