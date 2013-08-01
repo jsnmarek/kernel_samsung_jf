@@ -1,3 +1,10 @@
+read -p "Specify a release version number (optional): " version
+if [ "$version" != "" ]; then
+     export RLSVER="v$version"
+     echo "Set Release version to $RLSVER"
+else
+     echo "No release version number set. falling back to current date"
+fi
 echo "Make Clean"
 make clean
 echo "Build all ChronicKernel variants"

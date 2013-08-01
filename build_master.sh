@@ -2,9 +2,13 @@
 export PLATFORM="AOSP"
 export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
+if [ "$RLSVER" != "" ]; then
+export MUXEDNAMELONG="ChronicKernel-$MREV-$PLATFORM-$CARRIER-$RLSVER"
+else
 export MUXEDNAMELONG="ChronicKernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
+fi
 export MUXEDNAMESHRT="ChronicKernel-$MREV-$PLATFORM-$CARRIER*"
-export KTVER="--$MUXEDNAMELONG--"
+export KTVER="-$MUXEDNAMELONG-"
 export KERNELDIR=`readlink -f .`
 export PARENT_DIR=`readlink -f ..`
 export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
