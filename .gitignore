@@ -99,6 +99,8 @@ kernel/timeconst.h
 lib/crc32table.h
 scripts/basic/fixdep
 scripts/bin2c
+scripts/kconfig/mconf
+
 # stgit generated dirs
 patches-*
 
