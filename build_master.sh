@@ -2,15 +2,16 @@
 export PLATFORM="AOSP"
 export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
-export MUXEDNAMELONG="KT-SGS4-$MREV-$PLATFORM-$CARRIER-$CURDATE"
-export MUXEDNAMESHRT="KT-SGS4-$MREV-$PLATFORM-$CARRIER*"
-export KTVER="--$MUXEDNAMELONG--"
+export MUXEDNAMELONG="Slimmed-SGS4-$MREV-$PLATFORM-ATT-$CURDATE"
+export MUXEDNAMESHRT="Slimmed-SGS4-$MREV-$PLATFORM-ATT*"
+export SKVER="--$MUXEDNAMELONG--"
 export KERNELDIR=`readlink -f .`
 export PARENT_DIR=`readlink -f ..`
 export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
-export INITRAMFS_SOURCE=`readlink -f ..`/Ramdisks/$PLATFORM"_"$CARRIER"4.3"
+export INITRAMFS_SOURCE=`readlink -f ..`/RAMDISKS/AOSP_ATT4.3
 export CONFIG_$PLATFORM_BUILD=y
 export PACKAGEDIR=$PARENT_DIR/Packages/$PLATFORM
+export UPLOADER=/home/jason/Android/Projects/Dropbox-Uploader
 #Enable FIPS mode
 export USE_SEC_FIPS_MODE=true
 export ARCH=arm
@@ -18,7 +19,7 @@ export ARCH=arm
 # export CROSS_COMPILE=/home/ktoonsez/kernel/siyah/arm-2011.03/bin/arm-none-eabi-
 # export CROSS_COMPILE=/home/ktoonsez/android/system/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-
 # export CROSS_COMPILE=/home/ktoonsez/aokp4.2/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
-export CROSS_COMPILE=$PARENT_DIR/linaro4.7/bin/arm-eabi-
+export CROSS_COMPILE=/home/jason/Toolchains/android-toolchain-eabi-4.7.4/bin/arm-eabi-
 
 time_start=$(date +%s.%N)
 
@@ -49,15 +50,15 @@ rm $PACKAGEDIR/zImage
 rm arch/arm/boot/zImage
 
 echo "Make the kernel"
-make VARIANT_DEFCONFIG=jf_$CARRIER"_defconfig" SELINUX_DEFCONFIG=jfselinux_defconfig SELINUX_LOG_DEFCONFIG=jfselinux_log_defconfig KT_jf_defconfig
+make VARIANT_DEFCONFIG=jf_ATT_defconfig SELINUX_DEFCONFIG=jfselinux_defconfig SELINUX_LOG_DEFCONFIG=jfselinux_log_defconfig Slimmed_jf_defconfig
 
-echo "Modding .config file - "$KTVER
-sed -i 's,CONFIG_LOCALVERSION="-KT-SGS4",CONFIG_LOCALVERSION="'$KTVER'",' .config
+echo "Modding .config file - "$SKVER
+sed -i 's,CONFIG_LOCALVERSION="-Slimmed.Kernel",CONFIG_LOCALVERSION="'$SKVER'",' .config
 
 HOST_CHECK=`uname -n`
-if [ $HOST_CHECK = 'ktoonsez-VirtualBox' ] || [ $HOST_CHECK = 'task650-Underwear' ]; then
-	echo "Ktoonsez/task650 24!"
-	make -j24
+if [ $HOST_CHECK = 'jason-pc' ]; then
+	echo "jason-pc/jsnmarek !!"
+	make -j12
 else
 	echo "Others! - " + $HOST_CHECK
 	make -j`grep 'processor' /proc/cpuinfo | wc -l`
@@ -66,7 +67,7 @@ fi;
 echo "Copy modules to Package"
 cp -a $(find . -name *.ko -print |grep -v initramfs) $PACKAGEDIR/system/lib/modules/
 if [ $ADD_KTWEAKER = 'Y' ]; then
-	cp /home/ktoonsez/workspace/com.ktoonsez.KTweaker.apk $PACKAGEDIR/system/app/com.ktoonsez.KTweaker.apk
+	cp /home/jason/Android/kernel/com.ktoonsez.KTweaker.apk $PACKAGEDIR/system/app/com.ktoonsez.KTweaker.apk
 fi;
 
 if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
@@ -78,7 +79,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	./mkbootimg --cmdline 'console = null androidboot.hardware=qcom user_debug=31 zcache' --kernel $PACKAGEDIR/zImage --ramdisk $PACKAGEDIR/ramdisk.gz --base 0x80200000 --pagesize 2048 --ramdisk_offset 0x02000000 --output $PACKAGEDIR/boot.img 
 	if [ $EXEC_LOKI = 'Y' ]; then
 		echo "Executing loki"
-		./loki_patch-linux-x86_64 boot aboot$CARRIER.img $PACKAGEDIR/boot.img $PACKAGEDIR/boot.lok
+		./loki_patch-linux-x86_64 boot abootATT.img $PACKAGEDIR/boot.img $PACKAGEDIR/boot.lok
 		rm $PACKAGEDIR/boot.img
 	fi;
 	cd $PACKAGEDIR
@@ -98,10 +99,9 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	FILENAME=../$MUXEDNAMELONG.zip
 	FILESIZE=$(stat -c%s "$FILENAME")
 	echo "Size of $FILENAME = $FILESIZE bytes."
-	rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
-	exec >>../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
-	echo "$MUXEDNAMELONG,$FILESIZE,http://ktoonsez.jonathanjsimon.com/sgs4/$PLATFORM/$MUXEDNAMELONG.zip"
-	
+
+	$UPLOADER ./dropbox_uploader.sh upload $MUXEDNAMELONG.zip /SGS4/$PLATFORM/ATT
+			
 	cd $KERNELDIR
 else
 	echo "KERNEL DID NOT BUILD! no zImage exist"
