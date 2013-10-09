@@ -11,6 +11,7 @@ export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
 export INITRAMFS_SOURCE=`readlink -f ..`/RAMDISKS/AOSP_ATT4.3
 export CONFIG_$PLATFORM_BUILD=y
 export PACKAGEDIR=$PARENT_DIR/Packages/$PLATFORM
+export UPLOADER=/home/jason/Android/Projects/Dropbox-Uploader/
 #Enable FIPS mode
 export USE_SEC_FIPS_MODE=true
 export ARCH=arm
@@ -100,6 +101,10 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	echo "Size of $FILENAME = $FILESIZE bytes."
 
 	cd $KERNELDIR
+	echo "Upload zip"
+	./dropbox_uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
+	echo "File upload complete"
+
 else
 	echo "KERNEL DID NOT BUILD! no zImage exist"
 fi;
