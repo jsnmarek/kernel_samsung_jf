@@ -11,7 +11,6 @@ export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
 export INITRAMFS_SOURCE=`readlink -f ..`/RAMDISKS/AOSP_ATT4.3
 export CONFIG_$PLATFORM_BUILD=y
 export PACKAGEDIR=$PARENT_DIR/Packages/$PLATFORM
-export UPLOADER=/home/jason/Android/Projects/Dropbox-Uploader
 #Enable FIPS mode
 export USE_SEC_FIPS_MODE=true
 export ARCH=arm
@@ -99,8 +98,6 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	FILENAME=../$MUXEDNAMELONG.zip
 	FILESIZE=$(stat -c%s "$FILENAME")
 	echo "Size of $FILENAME = $FILESIZE bytes."
-
-	cd $UPLOADER /.dropbox_uploader.sh upload $MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
 
 	cd $KERNELDIR
 else
