@@ -102,7 +102,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 
 	cd $KERNELDIR
 	echo "Upload zip"
-	./dropbox_uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
+	./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
 	echo "File upload complete"
 
 else
