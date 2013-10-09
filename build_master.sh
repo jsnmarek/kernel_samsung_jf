@@ -100,7 +100,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	FILESIZE=$(stat -c%s "$FILENAME")
 	echo "Size of $FILENAME = $FILESIZE bytes."
 
-	$UPLOADER /.dropbox_uploader.sh upload $MUXEDNAMELONG.zip /SGS4/$PLATFORM
+	cd $UPLOADER /.dropbox_uploader.sh upload $MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
 
 	cd $KERNELDIR
 else
