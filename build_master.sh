@@ -2,8 +2,8 @@
 export PLATFORM="AOSP"
 export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
-export MUXEDNAMELONG="Slimmed.Kernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
-export MUXEDNAMESHRT="Slimmed.Kernel-$MREV-$PLATFORM-$CARRIER*"
+export MUXEDNAMELONG="SlimmedKernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
+export MUXEDNAMESHRT="SlimmedKernel-$MREV-$PLATFORM-$CARRIER*"
 export KTVER="-$MUXEDNAMELONG"
 export SRC_ROOT=`readlink -f ../../..`
 export KERNELDIR=`readlink -f .`
