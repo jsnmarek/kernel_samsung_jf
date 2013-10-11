@@ -2,18 +2,14 @@
 export PLATFORM="AOSP"
 export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
-if [ "$RLSVER" != "" ]; then
-export MUXEDNAMELONG="ChronicKernel-$MREV-$PLATFORM-$CARRIER-$RLSVER"
-else
-export MUXEDNAMELONG="ChronicKernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
-fi
-export MUXEDNAMESHRT="ChronicKernel-$MREV-$PLATFORM-$CARRIER*"
+export MUXEDNAMELONG="Slimmed.Kernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
+export MUXEDNAMESHRT="Slimmed.Kernel-$MREV-$PLATFORM-$CARRIER*"
 export KTVER="-$MUXEDNAMELONG"
 export SRC_ROOT=`readlink -f ../../..`
 export KERNELDIR=`readlink -f .`
 export PARENT_DIR=`readlink -f ..`
 export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
-export INITRAMFS_SOURCE=`readlink -f ..`/Ramdisks/$PLATFORM"_"$CARRIER-$MREV
+export INITRAMFS_SOURCE=`readlink -f ..`/SGS4-RAMDISKS/$PLATFORM"_"$CARRIER-$MREV
 export CONFIG_$PLATFORM_BUILD=y
 export PACKAGEDIR=$KERNELDIR/Packages/$PLATFORM
 # enable ccache
@@ -21,7 +17,7 @@ export USE_CCACHE=1
 #Enable FIPS mode
 export USE_SEC_FIPS_MODE=true
 export ARCH=arm
-export CROSS_COMPILE=$SRC_ROOT/prebuilt/linux-x86/toolchain/linaro/bin/arm-eabi-
+export CROSS_COMPILE=/home/jason/Toolchains/android-toolchain-eabi-4.7.4/bin/arm-eabi-
 
 time_start=$(date +%s.%N)
 
@@ -51,19 +47,15 @@ rm $PACKAGEDIR/zImage > /dev/null 2>&1
 rm arch/arm/boot/zImage > /dev/null 2>&1
 
 echo "Make the kernel"
-make VARIANT_DEFCONFIG=jf_$CARRIER"_defconfig" SELINUX_DEFCONFIG=jfselinux_defconfig SELINUX_LOG_DEFCONFIG=jfselinux_log_defconfig chronic_jf_defconfig
+make VARIANT_DEFCONFIG=jf_$CARRIER"_defconfig" SELINUX_DEFCONFIG=jfselinux_defconfig SELINUX_LOG_DEFCONFIG=jfselinux_log_defconfig Slimmed_jf_defconfig
 
 echo "Modding .config file - "$KTVER
-sed -i 's,CONFIG_LOCALVERSION="-ChronicKernel-linaro",CONFIG_LOCALVERSION="'$KTVER'",' .config
-if [ "$RLSVER" != "" ]; then
-echo "Release version number set - disabling LOCALVERSION_AUTO"
-sed -i 's,CONFIG_LOCALVERSION_AUTO=y,# CONFIG_LOCALVERSION_AUTO is not set,' .config
-fi
+sed -i 's,CONFIG_LOCALVERSION="-Slimmed.Kernel",CONFIG_LOCALVERSION="'$KTVER'",' .config
 
 HOST_CHECK=`uname -n`
-if [ $HOST_CHECK = 'chronic-buildbox' ]; then
-	echo "detected build server...running make with 24 jobs"
-	make -j24
+if [ $HOST_CHECK = 'jason-pc' ]; then
+	echo "detected build server...running make with 12 jobs"
+	make -j12
 else
 	echo "Others! - " + $HOST_CHECK
 	make -j`grep 'processor' /proc/cpuinfo | wc -l`
