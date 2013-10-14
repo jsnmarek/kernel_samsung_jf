@@ -2,8 +2,8 @@
 export PLATFORM="AOSP"
 export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
-export MUXEDNAMELONG="SlimmedKernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
-export MUXEDNAMESHRT="SlimmedKernel-$MREV-$PLATFORM-$CARRIER*"
+export MUXEDNAMELONG="SlimmedKernelv2-$MREV-$PLATFORM-$CARRIER-$CURDATE"
+export MUXEDNAMESHRT="SlimmedKernelv2-$MREV-$PLATFORM-$CARRIER*"
 export KTVER="-$MUXEDNAMELONG"
 export SRC_ROOT=`readlink -f ../../..`
 export KERNELDIR=`readlink -f .`
@@ -50,7 +50,7 @@ echo "Make the kernel"
 make VARIANT_DEFCONFIG=jf_$CARRIER"_defconfig" SELINUX_DEFCONFIG=jfselinux_defconfig SELINUX_LOG_DEFCONFIG=jfselinux_log_defconfig Slimmed_jf_defconfig
 
 echo "Modding .config file - "$KTVER
-sed -i 's,CONFIG_LOCALVERSION="-Slimmed.Kernel",CONFIG_LOCALVERSION="'$KTVER'",' .config
+sed -i 's,CONFIG_LOCALVERSION="-Slimmed.Kernelv2",CONFIG_LOCALVERSION="'$KTVER'",' .config
 
 HOST_CHECK=`uname -n`
 if [ $HOST_CHECK = 'jason-pc' ]; then
@@ -98,6 +98,10 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	echo "Size of $FILENAME = $FILESIZE bytes."
 	
 	cd $KERNELDIR
+echo "Upload zip"
+	./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
+	echo "File upload complete"
+
 else
 	echo "KERNEL DID NOT BUILD! no zImage exist"
 fi;
