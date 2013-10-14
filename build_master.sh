@@ -9,7 +9,7 @@ export SRC_ROOT=`readlink -f ../../..`
 export KERNELDIR=`readlink -f .`
 export PARENT_DIR=`readlink -f ..`
 export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
-export INITRAMFS_SOURCE=`readlink -f ..`/RAMDISKS/$PLATFORM"_"$CARRIER-$MREV
+export INITRAMFS_SOURCE=`readlink -f ..`/RAMDISKS/$PLATFORM"_"$CARRIER"4.3"
 export CONFIG_$PLATFORM_BUILD=y
 export PACKAGEDIR=$PARENT_DIR/Packages/$PLATFORM
 # enable ccache
