@@ -64,7 +64,7 @@ fi;
 
 echo "Copy modules to Package"
 cp -a $(find . -name *.ko -print |grep -v initramfs) $PACKAGEDIR/system/lib/modules/
-if [ $ADD_CHRONIC_CONFIG = 'Y' ]; then
+if [ $ADD_KTWEAKER = 'Y' ]; then
 	cp /home/jason/Android/kernel/com.ktoonsez.KTweaker.apk $PACKAGEDIR/system/app/com.ktoonsez.KTweaker.apk
 fi;
 
