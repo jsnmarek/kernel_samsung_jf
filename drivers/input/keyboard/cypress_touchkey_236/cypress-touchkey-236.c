@@ -164,13 +164,6 @@ static struct pm_gpio tkey_sleep_int = {
 	.inv_int_pol	= 0,
 };
 
-extern void boostpulse_relay_kt(void);
-static bool kt_is_active_benabled = false;
-void kt_is_active_benabled_touchkey(bool val)
-{
-	kt_is_active_benabled = val;
-}
-
 static void cypress_int_gpio_setting(bool value)
 {
 	int ret;
@@ -786,14 +779,8 @@ static irqreturn_t cypress_touchkey_interrupt(int irq, void *dev_id)
 
 	press = !(buf[0] & PRESS_BIT_MASK);
 	code = (int)(buf[0] & KEYCODE_BIT_MASK) - 1;
-	printk(KERN_ERR
-		"[TouchKey]press=%d, code=%d\n", press, code);
-	
-	if (kt_is_active_benabled && press == 1 && (info->keycode[code] == 158 || info->keycode[code] == 139))
-	{
-		boostpulse_relay_kt();
-		//pr_alert("KEY_PRESS: %d-%d\n", info->keycode[code], press);
-	}
+	//printk(KERN_ERR
+	//	"[TouchKey]press=%d, code=%d\n", press, code);
 	
 	if (code < 0) {
 		dev_err(&info->client->dev,
