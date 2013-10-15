@@ -54,7 +54,7 @@ sed -i 's,CONFIG_LOCALVERSION="-Slimmed.Kernelv2",CONFIG_LOCALVERSION="'$KTVER'"
 
 HOST_CHECK=`uname -n`
 if [ $HOST_CHECK = 'jason-pc' ]; then
-	echo "detected build server...running make with 12 jobs"
+	echo "jason-pc detected!!!...Running make with 12 jobs"
 	make -j12
 else
 	echo "Others! - " + $HOST_CHECK
