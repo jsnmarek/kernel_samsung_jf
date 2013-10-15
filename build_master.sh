@@ -98,8 +98,8 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	echo "Size of $FILENAME = $FILESIZE bytes."
 	
 	cd $KERNELDIR
-echo "Upload zip"
-	./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
+	echo "Upload zip"
+	./uploader.sh upload /home/jason/Android/kernel/kernel_samsung_jf/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
 	echo "File upload complete"
 
 else
