@@ -21,6 +21,7 @@
 # GOV=wheatley
 # GOV=userspace
 # GOV=consevative
+# GOV=ktoonservativeq
 # GOV=interactive
 # GOV=lagfee
 # GOV=performance
@@ -33,8 +34,8 @@ GOV=intellidemand
 # Range: 81000 - 2322000 (81Mhtz - 2.32Ghtz)
 #
 # Max/Min
-MAXFREQ=1890000
-MINFREQ=378000
+MAXFREQ=1944000
+MINFREQ=189000
 
 
 # Config 3D GPU clock
