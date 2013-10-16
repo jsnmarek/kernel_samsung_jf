@@ -21,7 +21,9 @@
 #include <linux/cpumask.h>
 #include <asm/div64.h>
 
-#define CPUFREQ_NAME_LEN 17
+#define CPUFREQ_NAME_LEN 16
+/* Print length for names. Extra 1 space for accomodating '\n' in prints */
+#define CPUFREQ_NAME_PLEN (CPUFREQ_NAME_LEN + 1)
 
 extern int GLOBALKT_MIN_FREQ_LIMIT;
 extern int GLOBALKT_MAX_FREQ_LIMIT;
@@ -117,7 +119,9 @@ struct cpufreq_policy {
 					 * governors are used */
 	unsigned int            util;  /* CPU utilization at max frequency */
 	unsigned int		policy; /* see above */
-	struct cpufreq_governor	*governor; /* see below */
+        struct cpufreq_governor *governor; /* see below */
+        void                    *governor_data;
+        bool                    governor_enabled; /* governor start/stop flag */
 
 	struct work_struct	update; /* if update_policy() needs to be
 					 * called, but you're in IRQ context */
@@ -188,20 +192,23 @@ static inline unsigned long cpufreq_scale(unsigned long old, u_int div, u_int mu
 #define CPUFREQ_GOV_START  1
 #define CPUFREQ_GOV_STOP   2
 #define CPUFREQ_GOV_LIMITS 3
+#define CPUFREQ_GOV_POLICY_INIT 4
+#define CPUFREQ_GOV_POLICY_EXIT 5
 
 struct cpufreq_governor {
-	char	name[CPUFREQ_NAME_LEN];
-	int	(*governor)	(struct cpufreq_policy *policy,
-				 unsigned int event);
-	ssize_t	(*show_setspeed)	(struct cpufreq_policy *policy,
-					 char *buf);
-	int	(*store_setspeed)	(struct cpufreq_policy *policy,
-					 unsigned int freq);
-	unsigned int max_transition_latency; /* HW must be able to switch to
-			next freq faster than this value in nano secs or we
-			will fallback to performance governor */
-	struct list_head	governor_list;
-	struct module		*owner;
+        char    name[CPUFREQ_NAME_LEN];
+        int     initialized;
+        int     (*governor)     (struct cpufreq_policy *policy,
+                                 unsigned int event);
+        ssize_t (*show_setspeed)        (struct cpufreq_policy *policy,
+                                         char *buf);
+        int     (*store_setspeed)       (struct cpufreq_policy *policy,
+                                         unsigned int freq);
+        unsigned int max_transition_latency; /* HW must be able to switch to
+                        next freq faster than this value in nano secs or we
+                        will fallback to performance governor */
+        struct list_head        governor_list;
+        struct module           *owner;
 };
 
 /*

@@ -122,6 +122,7 @@ struct cpufreq_cpu_save_data {
 static DEFINE_PER_CPU(struct cpufreq_cpu_save_data, cpufreq_policy_save);
 #endif
 static DEFINE_SPINLOCK(cpufreq_driver_lock);
+static DEFINE_MUTEX(cpufreq_governor_lock); 
 
 /*
  * cpu_policy_rwsem is a per CPU reader-writer semaphore designed to cure
@@ -986,7 +987,7 @@ static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
 	else if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
 		return sprintf(buf, "performance\n");
 	else if (policy->governor)
-		return scnprintf(buf, CPUFREQ_NAME_LEN, "%s\n",
+		return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
 				policy->governor->name);
 	return -EINVAL;
 }
@@ -995,10 +996,11 @@ static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
 /**
  * store_scaling_governor - store policy for the specified CPU
  */
-static ssize_t store_scaling_governor(struct cpufreq_policy *policy,
+static ssize_t __ref store_scaling_governor(struct cpufreq_policy *policy,
 					const char *buf, size_t count)
 {
 	unsigned int ret = -EINVAL;
+	int cpu;
 	char	str_governor[16];
 	struct cpufreq_policy new_policy;
 	char *envp[3];
@@ -1033,6 +1035,17 @@ static ssize_t store_scaling_governor(struct cpufreq_policy *policy,
 	envp[2] = NULL;
 	kobject_uevent_env(cpufreq_global_kobject, KOBJ_ADD, envp);
 
+		/* Set extra CPU cores to same scaling governor */
+		for (cpu = 1; cpu < CPUS_AVAILABLE; cpu++)
+		{
+			if (!cpu_online(cpu)) cpu_up(cpu);
+			if (&trmlpolicy[cpu] != NULL)
+			{
+				ret = cpufreq_get_policy(&new_policy, cpu);
+				__cpufreq_set_policy(&trmlpolicy[cpu], &new_policy);
+			}
+		}
+
 	if (ret)
 		return ret;
 	else
@@ -1044,7 +1057,7 @@ static ssize_t store_scaling_governor(struct cpufreq_policy *policy,
  */
 static ssize_t show_scaling_driver(struct cpufreq_policy *policy, char *buf)
 {
-	return scnprintf(buf, CPUFREQ_NAME_LEN, "%s\n", cpufreq_driver->name);
+	return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n", cpufreq_driver->name);
 }
 
 /**
@@ -1065,7 +1078,7 @@ static ssize_t show_scaling_available_governors(struct cpufreq_policy *policy,
 		if (i >= (ssize_t) ((PAGE_SIZE / sizeof(char))
 		    - (CPUFREQ_NAME_LEN + 2)))
 			goto out;
-		i += scnprintf(&buf[i], CPUFREQ_NAME_LEN, "%s ", t->name);
+		i += scnprintf(&buf[i], CPUFREQ_NAME_PLEN, "%s ", t->name);
 	}
 out:
 	i += sprintf(&buf[i], "\n");
@@ -2443,7 +2456,37 @@ static int __cpufreq_governor(struct cpufreq_policy *policy,
 
 	pr_debug("__cpufreq_governor for CPU %u, event %u\n",
 						policy->cpu, event);
+ 
+mutex_lock(&cpufreq_governor_lock); 
+if ((!policy->governor_enabled && (event == CPUFREQ_GOV_STOP)) || 
+(policy->governor_enabled && (event == CPUFREQ_GOV_START))) { 
+mutex_unlock(&cpufreq_governor_lock); 
+return -EBUSY; 
+} 
+
+if (event == CPUFREQ_GOV_STOP) 
+policy->governor_enabled = false; 
+else if (event == CPUFREQ_GOV_START) 
+policy->governor_enabled = true; 
+
+mutex_unlock(&cpufreq_governor_lock); 
+
 	ret = policy->governor->governor(policy, event);
+
+        if (!ret) {
+               if (event == CPUFREQ_GOV_POLICY_INIT)
+                        policy->governor->initialized++;
+                else if (event == CPUFREQ_GOV_POLICY_EXIT)
+                        policy->governor->initialized--;
+        } else {
+                /* Restore original values */
+                mutex_lock(&cpufreq_governor_lock);
+                if (event == CPUFREQ_GOV_STOP)
+                        policy->governor_enabled = true;
+                else if (event == CPUFREQ_GOV_START)
+                        policy->governor_enabled = false;
+                mutex_unlock(&cpufreq_governor_lock);
+        }
 
 	/* we keep one module reference alive for
 			each CPU governed by this CPU */
