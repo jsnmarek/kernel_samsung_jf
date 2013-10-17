@@ -1,4 +1,7 @@
 #!/bin/sh
+export CARRIER="ATT"
+export ADD_KTWEAKER="Y"
+export EXEC_LOKI="Y"
 export PLATFORM="AOSP"
 export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
