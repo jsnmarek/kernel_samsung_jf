@@ -105,10 +105,8 @@ time_end=$(date +%s.%N)
 	echo "$MUXEDNAMELONG,$FILESIZE,SGS4,$PLATFORM,$MUXEDNAMELONG.zip"
 
         cd $KERNELDIR
-        echo "Upload zip"
         ./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
-        echo "File upload complete"
-
+        
 else
         echo "KERNEL DID NOT BUILD! no zImage exist"
 fi;
