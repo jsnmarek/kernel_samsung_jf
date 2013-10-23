@@ -103,6 +103,7 @@ time_end=$(date +%s.%N)
         rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
         exec >>../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
 	echo "$MUXEDNAMELONG,$FILESIZE,SGS4,$PLATFORM,$MUXEDNAMELONG.zip"
+	fi;
 
         cd $KERNELDIR
         ./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
