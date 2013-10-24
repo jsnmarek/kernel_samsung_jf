@@ -1835,7 +1835,6 @@ __acquires(&gcwq->lock)
 	struct global_cwq *gcwq;
 	struct hlist_head *bwh;
 	bool cpu_intensive;
-	work_func_t f = work->func;
 	int work_color;
 	struct worker *collision;
 	
@@ -1975,7 +1974,6 @@ nullgetwork:
 	smp_wmb();	// paired with test_and_set_bit(PENDING)
 	work_clear_pending(work);
 	trace_workqueue_execute_start(work);
-	f(work);
 	trace_workqueue_execute_end(work);
 
 	if (unlikely(gcwq))
