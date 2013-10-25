@@ -100,13 +100,15 @@ time_end=$(date +%s.%N)
         FILENAME=../$MUXEDNAMELONG.zip
         FILESIZE=$(stat -c%s "$FILENAME")
         echo "Size of $FILENAME = $FILESIZE bytes."
-        rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
-        exec ../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
-	echo "$MUXEDNAMELONG,$FILESIZE,SGS4,$PLATFORM,$MUXEDNAMELONG.zip"
-	fi;
-
-        cd $KERNELDIR
+        
+	cd $KERNELDIR
         ./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
+
+	cd $PACKAGEDIR
+	rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
+        exec >>../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
+	echo "$MUXEDNAMELONG,$FILESIZE,SGS4,$PLATFORM,$MUXEDNAMELONG.zip"
+	fi;       
         
 else
         echo "KERNEL DID NOT BUILD! no zImage exist"
