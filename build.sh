@@ -101,7 +101,7 @@ time_end=$(date +%s.%N)
         FILESIZE=$(stat -c%s "$FILENAME")
         echo "Size of $FILENAME = $FILESIZE bytes."
         rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
-        exec >../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
+        exec ../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
 	echo "$MUXEDNAMELONG,$FILESIZE,SGS4,$PLATFORM,$MUXEDNAMELONG.zip"
 	fi;
 
