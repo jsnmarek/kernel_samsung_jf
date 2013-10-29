@@ -20,7 +20,7 @@ export USE_CCACHE=1
 #Enable FIPS mode
 export USE_SEC_FIPS_MODE=true
 export ARCH=arm
-export CROSS_COMPILE=/home/jason/Toolchains/android-toolchain-eabi-4.7.4/bin/arm-eabi-
+export CROSS_COMPILE=/home/jsnmarek/Toolchains/android-toolchain-eabi-4.7.4/bin/arm-eabi-
 
 time_start=$(date +%s.%N)
 
@@ -57,8 +57,8 @@ echo "Modding .config file - "$KTVER
 sed -i 's,CONFIG_LOCALVERSION="-Slimmed.Kernel",CONFIG_LOCALVERSION="'$KTVER'",' .config
 
 HOST_CHECK=`uname -n`
-if [ $HOST_CHECK = 'jason-pc' ]; then
-        echo "jason-pc detected!! Running make with 12 jobs"
+if [ $HOST_CHECK = 'jsnmarek-VirtualBox' ]; then
+        echo "jsnmarek detected!! Running make with 12 jobs"
         make -j12
 else
         echo "Others! - " + $HOST_CHECK
@@ -68,7 +68,7 @@ fi;
 echo "Copy modules to Package"
 cp -a $(find . -name *.ko -print |grep -v initramfs) $PACKAGEDIR/system/lib/modules/
 if [ $ADD_KTWEAKER = 'Y' ]; then
-        cp /home/jason/Android/kernel/com.ktoonsez.KTweaker.apk $PACKAGEDIR/system/app/com.ktoonsez.KTweaker.apk
+        cp /home/jsnmarek/Android/kernel/com.ktoonsez.KTweaker.apk $PACKAGEDIR/system/app/com.ktoonsez.KTweaker.apk
 fi;
 
 if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
