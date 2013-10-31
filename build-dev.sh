@@ -102,7 +102,7 @@ time_end=$(date +%s.%N)
         echo "Size of $FILENAME = $FILESIZE bytes."
         rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
         exec >>../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
-        echo "$MUXEDNAMELONG,$FILESIZE,http://jsnmarek.jasonmarek.com/sgs4/$PLATFORM/$MUXEDNAMELONG.zip"
+        echo "$MUXEDNAMELONG,$FILESIZE,http://jsnmarek-VirtualBox/sgs4/$PLATFORM/$MUXEDNAMELONG.zip"
 	
 else
         echo "KERNEL DID NOT BUILD! no zImage exist"
