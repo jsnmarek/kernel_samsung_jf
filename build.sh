@@ -102,7 +102,7 @@ time_end=$(date +%s.%N)
         echo "Size of $FILENAME = $FILESIZE bytes."
         
 	cd $KERNELDIR
-        ./uploader.sh upload /home/jason/Android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
+        ./uploader.sh upload /home/jsnmarek/android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
 
 	cd $PACKAGEDIR
 	rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
