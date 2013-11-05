@@ -580,28 +580,6 @@ static int mdp_lut_hw_update(struct fb_cmap *cmap)
 
 static int mdp_lut_push;
 static int mdp_lut_push_i;
-static int mdp_lut_resume_needed;
-
-static void mdp_lut_status_restore(void)
-{
-	unsigned long flags;
-
-	if (mdp_lut_resume_needed) {
-		spin_lock_irqsave(&mdp_lut_push_lock, flags);
-		mdp_lut_push = 1;
-		spin_unlock_irqrestore(&mdp_lut_push_lock, flags);
-	}
-}
-
-static void mdp_lut_status_backup(void)
-{
-	uint32_t status = inpdw(MDP_BASE + 0x90070) & 0x7;
-	if (status)
-		mdp_lut_resume_needed = 1;
-	else
-		mdp_lut_resume_needed = 0;
-}
-
 static int mdp_lut_update_nonlcdc(struct fb_info *info, struct fb_cmap *cmap)
 {
 	int ret;
@@ -664,11 +642,11 @@ int mdp_preset_lut_update_lcdc(struct fb_cmap *cmap, uint32_t *internal_lut)
 		r = lut2r(internal_lut[i]);
 		g = lut2g(internal_lut[i]);
 		b = lut2b(internal_lut[i]);
-
+#ifdef CONFIG_LCD_KCAL
 		r = scaled_by_kcal(r, *(cmap->red));
 		g = scaled_by_kcal(g, *(cmap->green));
 		b = scaled_by_kcal(b, *(cmap->blue));
-
+#endif
 		MDP_OUTP(MDP_BASE + 0x94800 +
 			(0x400*mdp_lut_i) + cmap->start*4 + i*4,
 				((g & 0xff) |
@@ -685,7 +663,6 @@ int mdp_preset_lut_update_lcdc(struct fb_cmap *cmap, uint32_t *internal_lut)
 
 	return 0;
 }
-EXPORT_SYMBOL(mdp_preset_lut_update_lcdc);
 #endif
 
 static void mdp_lut_enable(void)
@@ -2373,7 +2350,6 @@ static int mdp_off(struct platform_device *pdev)
 	atomic_set(&vsync_cntrl.vsync_resume, 0);
 	complete_all(&vsync_cntrl.vsync_wait);
 	mdp_clk_ctrl(1);
-	mdp_lut_status_backup();
 
 	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
 	ret = panel_next_off(pdev);
@@ -2426,7 +2402,6 @@ static int mdp_on(struct platform_device *pdev)
 		mdp_clk_ctrl(1);
 		mdp_bus_scale_restore_request();
 		mdp4_hw_init();
-		mdp_lut_status_restore();
 		outpdw(MDP_BASE + 0x0038, mdp4_display_intf);
 		if (mfd->panel.type == MIPI_CMD_PANEL) {
 			mdp_vsync_cfg_regs(mfd, FALSE);
