@@ -7,8 +7,7 @@ export MREV="JB4.3"
 export CURDATE=`date "+%m.%d.%Y"`
 export MUXEDNAMELONG="SlimmedKernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
 export MUXEDNAMESHRT="SlimmedKernel-$MREV-$PLATFORM-$CARRIER*"
-export KTVER="-$MUXEDNAMELONG"
-export SRC_ROOT=`readlink -f ../../..`
+export KTVER="--$MUXEDNAMELONG--"
 export KERNELDIR=`readlink -f .`
 export PARENT_DIR=`readlink -f ..`
 export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
@@ -94,7 +93,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
         rm ../$MUXEDNAMESHRT.zip > /dev/null 2>&1
         zip -r ../$MUXEDNAMELONG.zip .
 
-time_end=$(date +%s.%N)
+        time_end=$(date +%s.%N)
         echo -e "${BLDYLW}Total time elapsed: ${TCTCLR}${TXTGRN}$(echo "($time_end - $time_start) / 60"|bc ) ${TXTYLW}minutes${TXTGRN} ($(echo "$time_end - $time_start"|bc ) ${TXTYLW}seconds) ${TXTCLR}"
 
         FILENAME=../$MUXEDNAMELONG.zip
