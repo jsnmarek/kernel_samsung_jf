@@ -8,6 +8,7 @@ export CURDATE=`date "+%m.%d.%Y"`
 export MUXEDNAMELONG="SlimmedKernel-$MREV-$PLATFORM-$CARRIER-$CURDATE"
 export MUXEDNAMESHRT="SlimmedKernel-$MREV-$PLATFORM-$CARRIER*"
 export KTVER="--$MUXEDNAMELONG--"
+export SRC_ROOT=`readlink -f ../../..`
 export KERNELDIR=`readlink -f .`
 export PARENT_DIR=`readlink -f ..`
 export INITRAMFS_DEST=$KERNELDIR/kernel/usr/initramfs
