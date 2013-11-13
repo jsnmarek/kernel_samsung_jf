@@ -102,7 +102,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
         rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
         exec >>../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
         echo "$MUXEDNAMELONG,$FILESIZE,http://jsnmarek-VirtualBox/sgs4/$PLATFORM/$MUXEDNAMELONG.zip"
-	
+        
 else
         echo "KERNEL DID NOT BUILD! no zImage exist"
 fi;
