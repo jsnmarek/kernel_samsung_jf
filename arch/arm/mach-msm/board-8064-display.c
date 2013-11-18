@@ -31,6 +31,8 @@
 //KT Specifics
 static bool ktoonservative_is_activef = false;
 extern void set_screen_on_off_mhz(bool onoff);
+extern void set_screen_on_off_flag(bool onoff);
+extern void set_screen_on_off_flaghk(bool onoff);
 extern void screen_is_on_relay_kt(bool state);
 
 void ktoonservative_is_activebd(bool val)
@@ -282,9 +284,9 @@ static struct msm_bus_scale_pdata mdp_bus_scale_pdata = {
 static struct msm_panel_common_pdata mdp_pdata = {
 	.gpio = MDP_VSYNC_GPIO,
 	.mdp_max_clk = 266667000,
-	.mdp_max_bw = 3080000000UL,
-	.mdp_bw_ab_factor = 200,
-	.mdp_bw_ib_factor = 210,
+	.mdp_max_bw = 4290000000u,
+	.mdp_bw_ab_factor = 115,
+	.mdp_bw_ib_factor = 200,
 	.mdp_bus_scale_table = &mdp_bus_scale_pdata,
 	.mdp_rev = MDP_REV_44,
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
@@ -927,6 +929,8 @@ static int mipi_panel_power_oled(int enable)
 		}
 #endif
 		set_screen_on_off_mhz(true);
+		set_screen_on_off_flag(true);
+		set_screen_on_off_flaghk(true);
 		if (ktoonservative_is_activef)
 			screen_is_on_relay_kt(true);
 	} else {
@@ -959,8 +963,11 @@ static int mipi_panel_power_oled(int enable)
 			return -ENODEV;
 		}
 		set_screen_on_off_mhz(false);
+		set_screen_on_off_flag(false);
+		set_screen_on_off_flaghk(false);
 		if (ktoonservative_is_activef)
 			screen_is_on_relay_kt(false);
+		//pr_alert("KT_RELAY_CALL  FROM SCREEN\n");
 	}
 
 	return rc;

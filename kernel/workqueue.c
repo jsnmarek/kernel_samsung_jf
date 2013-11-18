@@ -1835,7 +1835,6 @@ __acquires(&gcwq->lock)
 	struct global_cwq *gcwq;
 	struct hlist_head *bwh;
 	bool cpu_intensive;
-	work_func_t f = work->func;
 	int work_color;
 	struct worker *collision;
 	
@@ -1924,9 +1923,6 @@ __acquires(&gcwq->lock)
 	lock_map_acquire_read(&cwq->wq->lockdep_map);
 	lock_map_acquire(&lockdep_map);
 	trace_workqueue_execute_start(work);
-#ifdef CONFIG_SEC_DEBUG
-	secdbg_sched_msg("@%pS", f);
-#endif
 	worker->current_func(work);
 	/*
 	 * While we must be careful to not use "work" after this, the trace
@@ -1975,7 +1971,6 @@ nullgetwork:
 	smp_wmb();	// paired with test_and_set_bit(PENDING)
 	work_clear_pending(work);
 	trace_workqueue_execute_start(work);
-	f(work);
 	trace_workqueue_execute_end(work);
 
 	if (unlikely(gcwq))
