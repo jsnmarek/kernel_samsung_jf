@@ -94,20 +94,15 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
         rm ../$MUXEDNAMESHRT.zip > /dev/null 2>&1
         zip -r ../$MUXEDNAMELONG.zip .
 
-time_end=$(date +%s.%N)
+	time_end=$(date +%s.%N)
         echo -e "${BLDYLW}Total time elapsed: ${TCTCLR}${TXTGRN}$(echo "($time_end - $time_start) / 60"|bc ) ${TXTYLW}minutes${TXTGRN} ($(echo "$time_end - $time_start"|bc ) ${TXTYLW}seconds) ${TXTCLR}"
 
         FILENAME=../$MUXEDNAMELONG.zip
         FILESIZE=$(stat -c%s "$FILENAME")
         echo "Size of $FILENAME = $FILESIZE bytes."
-        
-	cd $KERNELDIR
-        ./uploader.sh upload /home/jsnmarek/android/kernel/Packages/$MUXEDNAMELONG.zip /SGS4/$PLATFORM/$MUXEDNAMELONG.zip
-
-	cd $PACKAGEDIR
-	rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
+        rm ../$MREV-$PLATFORM-$CARRIER"-version.txt"
         exec >>../$MREV-$PLATFORM-$CARRIER"-version.txt" 2>&1
-	echo "$MUXEDNAMELONG,$FILESIZE,SGS4,$PLATFORM,$MUXEDNAMELONG.zip"
+        echo "$MUXEDNAMELONG,$FILESIZE,http://jsnmarek-VirtualBox/sgs4/$PLATFORM/$MUXEDNAMELONG.zip"
 	
 else
         echo "KERNEL DID NOT BUILD! no zImage exist"
